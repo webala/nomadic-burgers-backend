@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import MenuItem, Customer, Order
+from .models import MenuItem, Customer, Order, MpesaTransaction
 
 class MenuItemsSerializer(serializers.ModelSerializer):
    class Meta:
@@ -20,6 +20,16 @@ class CreateOrderSeriailzer(serializers.Serializer):
    customer = CustomerSerializer()
 
 class OrderSerializer(serializers.ModelSerializer):
+   customer = CustomerSerializer()
    class Meta:
       model = Order
       fields = '__all__'
+   
+class MpesaPaymentSerializer(serializers.Serializer):
+   phone_number = serializers.IntegerField()
+   order_id = serializers.IntegerField()
+
+class MpesaTransactionSerializer(serializers.ModelSerializer):
+   class Meta:
+      model = MpesaTransaction
+      fields = "__all__"

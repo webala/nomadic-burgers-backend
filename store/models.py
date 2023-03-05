@@ -12,15 +12,24 @@ class MenuItem(models.Model):
    available = models.BooleanField(default=True)
    menu = models.ForeignKey(Menu, on_delete=models.CASCADE)
 
+   def __str__(self):
+      return "menu item {}".format(self.id)
+
 class Customer(models.Model):
    phone_number = models.CharField(max_length=13)
    name = models.CharField(max_length=20)
+
+   def __str__(self) -> str:
+      return self.name
 
 class Order(models.Model):
    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
    date = models.DateTimeField(auto_now_add=True)
    complete = models.BooleanField(default=False)
    paid = models.BooleanField(default=False)
+
+   def __str__(self):
+      return "order {}".format(self.id)
 
    @property
    def menu_items(self):
@@ -38,19 +47,24 @@ class OrderItem(models.Model):
    quantity = models.IntegerField()
    order = models.ForeignKey(Order, on_delete=models.CASCADE)
 
+
+   def __str__(self):
+      return 'order item {}'.format(self.id)
+
+      
    @property
    def item_total(self):
       return self.quantity * self.menu_item.price
 
 
 class MpesaTransaction(models.Model):
-    request_id = models.CharField(max_length=30)
-    date = models.DateTimeField(auto_now_add=True)
-    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
-    is_complete = models.BooleanField(default=False)
-    phone_number = models.CharField(max_length=15, null=True)
-    amount = models.DecimalField(max_digits=7, decimal_places=2, null=True)
-    receipt_number = models.CharField(max_length=15, null=True)
+   request_id = models.CharField(max_length=30)
+   date = models.DateTimeField(auto_now_add=True)
+   order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
+   is_complete = models.BooleanField(default=False)
+   phone_number = models.CharField(max_length=15, null=True)
+   amount = models.DecimalField(max_digits=7, decimal_places=2, null=True)
+   receipt_number = models.CharField(max_length=15, null=True)
 
-    def __str__(self):
-        return self.receipt_number if self.receipt_number else self.request_id
+   def __str__(self):
+      return self.receipt_number if self.receipt_number else self.request_id
