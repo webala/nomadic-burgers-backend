@@ -66,6 +66,11 @@ def set_order_complete(request):
    if serializer.is_valid(raise_exception=True):
       data = serializer.validated_data
       print('data: ', data)
+      order = Order.objects.get(id=data.get('id'))
+      order.complete = not order.complete
+      order.save()
+      return Response({'message': 'order status changed'}, status=200)
+
 
 class OrdersListView(generics.ListAPIView):
    queryset = Order.objects.all()

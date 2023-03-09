@@ -21,6 +21,8 @@ class CreateOrderSeriailzer(serializers.Serializer):
 
 class OrderSerializer(serializers.ModelSerializer):
    customer = CustomerSerializer()
+   id = serializers.IntegerField()
+   
    class Meta:
       model = Order
       fields = '__all__'
