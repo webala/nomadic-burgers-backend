@@ -4,8 +4,9 @@ from django.shortcuts import render
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from .models import *
-from .serializers import MenuItemsSerializer, CreateOrderSeriailzer, OrderSerializer, MpesaPaymentSerializer, MpesaTransactionSerializer
+from .serializers import MenuItemsSerializer, CreateOrderSeriailzer, OrderSerializer, MpesaPaymentSerializer, MpesaTransactionSerializer, OrderItemSerializer
 from .utils import initiate_stk_push
 # Create your views here.
 
@@ -58,6 +59,25 @@ class OrderView(APIView):
          return Response(serializer.data, status=200)
       else:
          return Response({'message': 'order not found'}, status=404)
+
+@api_view(['PUT']) 
+def set_order_complete(request):
+   serializer = OrderSerializer(data=request.data, partial=True)
+   if serializer.is_valid(raise_exception=True):
+      data = serializer.validated_data
+      print('data: ', data)
+
+class OrdersListView(generics.ListAPIView):
+   queryset = Order.objects.all()
+   serializer_class = OrderSerializer
+
+
+@api_view(['GET'])
+def order_items(request, order_id):
+   order = Order.objects.get(id=order_id)
+   items = order.orderitem_set.all()
+   serializer = OrderItemSerializer(items, many=True)
+   return Response(serializer.data, status=200)
 
 class ProcessMpesaPayment(APIView):
    def post(self, request):
